@@ -1,6 +1,6 @@
 import db from "../config/database.js";
 import bcrypt from 'bcrypt'
-// import { v4 as uuidV4 } from 'uuid'
+import { v4 as uuidV4 } from 'uuid'
 
 export const fazerCadastro = async (req, res) => {
     const {name, email, password} = req.body;
@@ -32,7 +32,22 @@ export const fazerLogin = async (req, res) => {
         `, [email])
 
         if(user.rowCount > 0 && bcrypt.compareSync(password, user.rows[0].password)){
-            res.send()
+            const token = uuidV4();
+            const existeToken = await db.query(`
+            SELECT sessions.token FROM users
+            JOIN sessions
+                ON users.id = "userId";
+            `)
+            if(existeToken.rowCount === 0){
+                await db.query(`
+                INSERT INTO sessions (token, "userId") values ($1, $2);
+                `,[token, user.rows[0].id])
+
+                res.send({token: token})
+            } else {
+                res.send(existeToken.rows[0])
+            }
+            
         } else {
             res.status(401).send("Usuário ou senha incorretos!")
         }
