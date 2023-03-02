@@ -6,8 +6,6 @@ export const criarUrl = async (req, res) => {
     const {id} = res.locals.sessions;
 
     try {
-        if(!url || url.length < 8) return res.sendStatus(422)
-
         const shortUrl = nanoid()
         await db.query(`
         INSERT INTO urls (url, "shortUrl", "userId") VALUES ($1, $2, $3)
