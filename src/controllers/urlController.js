@@ -37,3 +37,24 @@ export const pegarUrl = async (req, res) => {
         res.status(500).send(error)
     }
 }
+
+export const redirecionarParaUrl = async (req,res) => {
+    const {shortUrl} = req.params;
+
+    try {
+        const dados = await db.query(`
+        SELECT url, "visitCount" FROM urls WHERE "shortUrl" = $1
+        `, [shortUrl])
+
+        if(dados.rowCount === 0) return res.sendStatus(404)
+        
+        const visitCount = ++dados.rows[0].visitCount
+        await db.query(`
+        UPDATE urls SET "visitCount"= $1 WHERE "shortUrl" = $2
+        `, [visitCount, shortUrl])
+        
+        res.redirect(dados.rows[0].url)
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
