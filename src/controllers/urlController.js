@@ -22,3 +22,20 @@ export const criarUrl = async (req, res) => {
         res.status(500).send(error)
     }
 }
+
+export const pegarUrl = async (req, res) => {
+    const {id} = req.params;
+    try {
+        const dados = await db.query(`
+        SELECT id, "shortUrl", url FROM urls WHERE "userId" = $1
+        `, [id])
+
+        if(dados.rowCount === 0) return res.sendStatus(404);
+
+        if(dados.rowCount === 1) return  res.send(dados.rows[0])
+       
+        res.send(dados.rows)
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
