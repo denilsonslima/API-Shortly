@@ -7,12 +7,15 @@ export async function authValidate(req, res, next){
     if(!token) return res.status(422).send("Informe o token!");
     try {
         const tokenValidate = await db.query(`
-            SELECT * FROM tokens;
-        `)
+            SELECT users.id FROM sessions 
+            JOIN users
+                ON users.id = sessions."userId"
+                WHERE sessions.token = $1;
+        `, [token])
         
-        if(tokenValidate.rows.length === 0) return res.sendStatus(401);
+        if(tokenValidate.rowCount == 0) return res.sendStatus(401);
         
-        res.locals.sessao = tokenValidate;
+        res.locals.sessions = tokenValidate.rows[0]
         next()
     } catch (error) {
         res.status(500).send(error)

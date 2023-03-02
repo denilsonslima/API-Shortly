@@ -58,9 +58,9 @@ ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
 
 CREATE TABLE public.urls (
     id integer NOT NULL,
-    "userId" integer,
+    "userId" integer NOT NULL,
     url text NOT NULL,
-    "shortUrl" character varying(10) NOT NULL,
+    "shortUrl" character varying(21) NOT NULL,
     "visitCount" bigint DEFAULT 0 NOT NULL,
     "createdAt" timestamp without time zone DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'::text) NOT NULL
 );
@@ -171,7 +171,7 @@ SELECT pg_catalog.setval('public.sessions_id_seq', 7, true);
 -- Name: urls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.urls_id_seq', 1, false);
+SELECT pg_catalog.setval('public.urls_id_seq', 6, true);
 
 
 --
@@ -211,6 +211,14 @@ ALTER TABLE ONLY public.urls
 
 ALTER TABLE ONLY public.urls
     ADD CONSTRAINT "urls_shortUrl_key" UNIQUE ("shortUrl");
+
+
+--
+-- Name: urls urls_url_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.urls
+    ADD CONSTRAINT urls_url_key UNIQUE (url);
 
 
 --
