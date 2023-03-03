@@ -42,18 +42,18 @@ export const redirecionarParaUrl = async (req,res) => {
     const {shortUrl} = req.params;
 
     try {
-        const dados = await db.query(`
-        SELECT url, "visitCount" FROM urls WHERE "shortUrl" = $1
+        const {rows: [existe]} = await db.query(`
+        SELECT * FROM urls WHERE "shortUrl" = $1
         `, [shortUrl])
 
-        if(dados.rowCount === 0) return res.sendStatus(404)
+        if(!existe) return res.sendStatus(404)
         
-        const visitCount = Number(dados.rows[0].visitCount) + 1
+        const visitCount = Number(existe.visitCount) + 1
         await db.query(`
         UPDATE urls SET "visitCount"= $1 WHERE "shortUrl" = $2
         `, [visitCount, shortUrl])
         
-        res.redirect(dados.rows[0].url)
+        res.redirect(existe.url)
     } catch (error) {
         res.status(500).send(error)
     }
