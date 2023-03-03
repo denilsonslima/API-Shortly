@@ -53,3 +53,19 @@ export const deletarUsuario = async (req, res) => {
 
     res.sendStatus(204)
 }
+
+export const ranking = async (req, res) => {
+    const dados = await db.query(`
+    SELECT 
+	users.id AS id,
+	users.name AS name,
+	count(urls."shortUrl") AS "linksCount",
+	SUM(urls."visitCount") AS "visitCount"
+    FROM users
+    JOIN urls
+        ON users.id = urls."userId"
+    GROUP BY users.id;
+    `)
+
+    res.send(dados.rows)
+}
