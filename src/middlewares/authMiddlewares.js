@@ -7,7 +7,7 @@ export async function authValidate(req, res, next){
     if(!token) return res.status(422).send("Informe o token!");
     try {
         const tokenValidate = await db.query(`
-            SELECT users.id FROM sessions 
+            SELECT users.id AS id FROM sessions 
             JOIN users
                 ON users.id = sessions."userId"
                 WHERE sessions.token = $1;

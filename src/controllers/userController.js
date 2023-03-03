@@ -30,13 +30,14 @@ export const deletarUsuario = async (req, res) => {
     const {sessions} = res.locals;
     const {id} = req.params;
 
-    const {rows: [url]} = await db.query(`
+    const {rows: url, rowCount} = await db.query(`
     SELECT * FROM urls WHERE id = $1
     `, [id])
 
-    if(!url) return res.sendStatus(404)
+    if(rowCount < 1) return res.sendStatus(404)
 
-    if(url.userId !== sessions.id) return res.sendStatus(401)
+    const deleteUser = url[0].userId !== sessions.id;
+    if(deleteUser) return res.sendStatus(401)
 
     await db.query(`
     DELETE FROM urls WHERE id = $1
