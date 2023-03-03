@@ -27,14 +27,14 @@ export const dadosUser = async (req, res) => {
 }
 
 export const deletarUsuario = async (req, res) => {
-    const token = res.locals.token;
-    const id = req.params.id
+    const {token} = res.locals;
+    const {id} = req.params;
 
-    const url = await db.query(`
+    const {rows: [url]} = await db.query(`
     SELECT * FROM urls WHERE id = $1
     `, [id])
 
-    if(url.rowCount === 0) return res.sendStatus(404)
+    if(!url) return res.sendStatus(404)
 
     const dados = await db.query(`
     SELECT * FROM urls AS u

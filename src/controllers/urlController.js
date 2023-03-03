@@ -12,8 +12,8 @@ export const criarUrl = async (req, res) => {
         `, [url, shortUrl, id])
 
         const dados = await db.query(`
-        SELECT id, "shortUrl" from urls;
-        `)
+        SELECT id, "shortUrl" from urls where url = $1;
+        `, [url])
 
         res.status(201).send(dados.rows[0])
     } catch (error) {
