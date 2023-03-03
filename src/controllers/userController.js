@@ -6,7 +6,7 @@ export const dadosUser = async (req, res) => {
     SELECT 
 	u.id AS id, 
 	u.name AS name, 
-	SUM(url."visitCount") AS visitCount, 
+	SUM(url."visitCount") AS "visitCount", 
 	json_agg(json_build_object(
 		'id', url.id, 
 		'shortUrl', url."shortUrl", 
