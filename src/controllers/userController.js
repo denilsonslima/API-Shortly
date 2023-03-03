@@ -46,7 +46,7 @@ export const deletarUsuario = async (req, res) => {
     if(dados.rowCount === 0) return res.sendStatus(401)
 
     await db.query(`
-    DELETE * FROM urls WHERE id = $1
+    DELETE FROM urls WHERE id = $1
     `, [id])
 
     res.sendStatus(204)
