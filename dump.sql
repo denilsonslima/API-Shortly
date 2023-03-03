@@ -151,7 +151,7 @@ INSERT INTO public.sessions VALUES (7, 7, 'f1be9eb3-0f45-43ab-b2ed-999b2c8777af'
 -- Data for Name: urls; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.urls VALUES (8, 7, 'http://a', '8IGCHkjPDa1NXEXD4HB4J', 3, '2023-03-02 12:20:38.700939');
+INSERT INTO public.urls VALUES (8, 7, 'http://a', '8IGCHkjPDa1NXEXD4HB4J', 5, '2023-03-02 12:20:38.700939');
 
 
 --
