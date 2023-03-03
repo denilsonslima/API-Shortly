@@ -48,15 +48,13 @@ export const deletarUsuario = async (req, res) => {
 
 export const ranking = async (req, res) => {
     const dados = await db.query(`
-    SELECT 
-	users.id AS id,
-	users.name AS name,
-	count(urls."shortUrl") AS "linksCount",
-	SUM(urls."visitCount") AS "visitCount"
+    SELECT users.id, users.name, count(urls.id) AS "linksCount",
+    coalesce(sum(urls."visitCount"),0) AS "visitCount"
     FROM users
-    JOIN urls
-        ON users.id = urls."userId"
-    GROUP BY users.id;
+    LEFT JOIN urls ON users.id = urls."userId"
+    GROUP BY users.id, users.name
+    ORDER BY "visitCount" DESC
+    LIMIT 10
     `)
 
     res.send(dados.rows)
