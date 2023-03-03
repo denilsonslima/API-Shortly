@@ -48,11 +48,12 @@ export const redirecionarParaUrl = async (req,res) => {
 
         if(!existe) return res.sendStatus(404)
         
-        const visitCount = Number(existe.visitCount) + 1
         await db.query(`
-        UPDATE urls SET "visitCount"= $1 WHERE "shortUrl" = $2
-        `, [visitCount, shortUrl])
-        
+        UPDATE urls
+        SET "visitCount" = "visitCount" + 1
+        WHERE url = $1;
+        `, [shortUrl])
+
         res.redirect(existe.url)
     } catch (error) {
         res.status(500).send(error)
