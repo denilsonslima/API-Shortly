@@ -27,7 +27,7 @@ export const dadosUser = async (req, res) => {
 }
 
 export const deletarUsuario = async (req, res) => {
-    const {token} = res.locals;
+    const {sessions} = res.locals;
     const {id} = req.params;
 
     const {rows: [url]} = await db.query(`
@@ -36,16 +36,7 @@ export const deletarUsuario = async (req, res) => {
 
     if(!url) return res.sendStatus(404)
 
-    const dados = await db.query(`
-    SELECT * FROM urls AS u
-    JOIN sessions AS s
-        ON u."userId" = s."userId"
-    JOIN users
-        ON users.id = s."userId"
-    WHERE s.token = $1 AND u.id = $2 AND users.id = s."userId"
-    `, [token, id])
-
-    if(dados.rowCount === 0) return res.sendStatus(401)
+    if(url.userId !== sessions.id) return res.sendStatus(401)
 
     await db.query(`
     DELETE FROM urls WHERE id = $1
