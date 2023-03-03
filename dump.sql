@@ -151,6 +151,8 @@ INSERT INTO public.sessions VALUES (7, 7, 'f1be9eb3-0f45-43ab-b2ed-999b2c8777af'
 -- Data for Name: urls; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.urls VALUES (10, 7, 'http://ad', 'R-1J45HBEHvdwXlDE70oC', 1, '2023-03-02 13:04:58.529591');
+INSERT INTO public.urls VALUES (8, 7, 'http://a', '8IGCHkjPDa1NXEXD4HB4J', 1, '2023-03-02 12:20:38.700939');
 
 
 --
@@ -171,7 +173,7 @@ SELECT pg_catalog.setval('public.sessions_id_seq', 7, true);
 -- Name: urls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.urls_id_seq', 6, true);
+SELECT pg_catalog.setval('public.urls_id_seq', 10, true);
 
 
 --

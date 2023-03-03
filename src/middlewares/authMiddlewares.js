@@ -16,6 +16,7 @@ export async function authValidate(req, res, next){
         if(tokenValidate.rowCount == 0) return res.sendStatus(401);
         
         res.locals.sessions = tokenValidate.rows[0]
+        res.locals.token = token
         next()
     } catch (error) {
         res.status(500).send(error)
