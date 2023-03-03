@@ -40,7 +40,9 @@ export const deletarUsuario = async (req, res) => {
     SELECT * FROM urls AS u
     JOIN sessions AS s
         ON u."userId" = s."userId"
-    WHERE s.token = $1 AND u.id = $2 
+    JOIN users
+        ON users.id = s."userId"
+    WHERE s.token = $1 AND u.id = $2 AND users.id = s."userId"
     `, [token, id])
 
     if(dados.rowCount === 0) return res.sendStatus(401)
