@@ -48,7 +48,7 @@ export const redirecionarParaUrl = async (req,res) => {
 
         if(dados.rowCount === 0) return res.sendStatus(404)
         
-        const visitCount = ++dados.rows[0].visitCount
+        const visitCount = Number(dados.rows[0].visitCount) + 1
         await db.query(`
         UPDATE urls SET "visitCount"= $1 WHERE "shortUrl" = $2
         `, [visitCount, shortUrl])
