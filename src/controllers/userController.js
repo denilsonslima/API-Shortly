@@ -12,7 +12,7 @@ export const dadosUser = async (req, res) => {
 		'shortUrl', url."shortUrl", 
 		'url', url.url, 
 		'visitCount', url."visitCount"
-	)) AS shortenedUrls
+	)) AS "shortenedUrls"
     FROM users AS u 
     JOIN urls AS url 
         ON u.id = url."userId" 
