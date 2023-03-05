@@ -1,29 +1,34 @@
 import db from "../config/database.js";
 
 export const dadosUser = async (req, res) => {
-    const token = res.locals.token;
-    const dados = await db.query(`
-    SELECT 
-	u.id AS id, 
-	u.name AS name, 
-	SUM(url."visitCount") AS "visitCount", 
-	json_agg(json_build_object(
-		'id', url.id, 
-		'shortUrl', url."shortUrl", 
-		'url', url.url, 
-		'visitCount', url."visitCount"
-	)) AS "shortenedUrls"
-    FROM users AS u 
-    JOIN urls AS url 
-        ON u.id = url."userId" 
-    JOIN sessions AS s
-        ON u.id = s."userId"
-    WHERE s.token = $1
-    GROUP BY u.id, u.name;
-    `, [token])
+    const {id: userId} = res.locals.sessions;
 
+    try {
+        const {rows: [dados]} = await db.query(`
+        SELECT 
+            users.id, 
+            users.name, 
+            SUM(urls."visitCount") AS "visitCount", 
+            json_agg(json_build_object(
+            'id', urls.id, 
+            'shortUrl', urls."shortUrl", 
+            'url', urls.url, 
+            'visitCount', urls."visitCount"
+            )) AS "shortenedUrls"
+        FROM users
+        LEFT JOIN urls
+            ON users.id = urls."userId" 
+        WHERE users.id = $1
+        GROUP BY users.id, users.name;
+        `, [userId])
 
-    res.send(dados.rows[0])
+        res.send(dados)     
+         
+    }  catch (error) {
+        res.status(500).send(error)
+    }
+
+    res.send()
 }
 
 export const deletarUsuario = async (req, res) => {
