@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.6 (Ubuntu 14.6-0ubuntu0.22.04.1)
--- Dumped by pg_dump version 14.6 (Ubuntu 14.6-0ubuntu0.22.04.1)
+-- Dumped from database version 14.7 (Ubuntu 14.7-0ubuntu0.22.04.1)
+-- Dumped by pg_dump version 14.7 (Ubuntu 14.7-0ubuntu0.22.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,9 +26,10 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.sessions (
     id integer NOT NULL,
-    "userId" integer,
     token text NOT NULL,
-    "createdAt" timestamp without time zone DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'::text) NOT NULL
+    "userId" integer NOT NULL,
+    active boolean DEFAULT true NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT '2023-03-04 23:23:12.928447-03'::timestamp with time zone NOT NULL
 );
 
 
@@ -58,11 +59,11 @@ ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
 
 CREATE TABLE public.urls (
     id integer NOT NULL,
-    "userId" integer NOT NULL,
     url text NOT NULL,
-    "shortUrl" character varying(21) NOT NULL,
-    "visitCount" bigint DEFAULT 0 NOT NULL,
-    "createdAt" timestamp without time zone DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'::text) NOT NULL
+    "shortUrl" text NOT NULL,
+    "visitCount" bigint DEFAULT '0'::bigint NOT NULL,
+    "userId" integer NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT '2023-03-04 23:23:51.517519-03'::timestamp with time zone NOT NULL
 );
 
 
@@ -92,10 +93,10 @@ ALTER SEQUENCE public.urls_id_seq OWNED BY public.urls.id;
 
 CREATE TABLE public.users (
     id integer NOT NULL,
-    name character varying(100) NOT NULL,
-    email character varying(100) NOT NULL,
-    password text NOT NULL,
-    "createdAt" timestamp without time zone DEFAULT (CURRENT_DATE AT TIME ZONE 'America/Sao_Paulo'::text) NOT NULL
+    name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT '2023-03-05 00:02:45.59179-03'::timestamp with time zone NOT NULL
 );
 
 
@@ -144,50 +145,45 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.sessions VALUES (7, 7, 'f1be9eb3-0f45-43ab-b2ed-999b2c8777af', '2023-03-02 10:13:21.996784');
+INSERT INTO public.sessions VALUES (1, '1ca3562e-06ab-4d08-9314-85d998317bb4', 3, true, '2023-03-04 23:23:12.928447-03');
+INSERT INTO public.sessions VALUES (2, '70a50b85-0898-4af0-93c2-9d9590d77796', 1, true, '2023-03-04 23:23:12.928447-03');
+INSERT INTO public.sessions VALUES (3, '60ff3cd6-473e-4465-bf9d-df4005b0a17b', 2, true, '2023-03-04 23:23:12.928447-03');
 
 
 --
 -- Data for Name: urls; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.urls VALUES (8, 7, 'http://a', '8IGCHkjPDa1NXEXD4HB4J', 5, '2023-03-02 12:20:38.700939');
 
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.users VALUES (7, 'denilson', 'denilsondslima@gmail.com', '$2b$10$ZMEhAeboH0KyUWJmvHjrTOKEm.VwqysLE/TPU7kQthFy8qgAbUeue', '2023-02-28 00:00:00');
+INSERT INTO public.users VALUES (1, 'denilson', 'denilson@gmail.com', '$2b$10$RgSGX3a5oaBo5.drNKMDqeJ9legriO3X5hvqi4hmbK8Fg.gr86CvG', '2023-03-05 00:02:45.59179-03');
+INSERT INTO public.users VALUES (2, 'rayssa', 'rayssaalves@gmail.com', '$2b$10$69m9Oa05qY2QQKWV5Gs51unJFb86kpM0UZP2Y6l5VqDKykSUjerLO', '2023-03-05 00:02:45.59179-03');
+INSERT INTO public.users VALUES (3, 'agatha', 'agathaalvesdelima@gmail.com', '$2b$10$/4abIj32pQUbFiil7VdYtOgJjUGrqNxO4kkmhD6jtn8vBVTtJ3ikm', '2023-03-05 00:02:45.59179-03');
 
 
 --
 -- Name: sessions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.sessions_id_seq', 7, true);
+SELECT pg_catalog.setval('public.sessions_id_seq', 3, true);
 
 
 --
 -- Name: urls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.urls_id_seq', 10, true);
+SELECT pg_catalog.setval('public.urls_id_seq', 1, false);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 7, true);
-
-
---
--- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
+SELECT pg_catalog.setval('public.users_id_seq', 3, true);
 
 
 --
@@ -199,14 +195,6 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- Name: urls urls_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.urls
-    ADD CONSTRAINT urls_pkey PRIMARY KEY (id);
-
-
---
 -- Name: urls urls_shortUrl_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -215,35 +203,11 @@ ALTER TABLE ONLY public.urls
 
 
 --
--- Name: urls urls_url_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.urls
-    ADD CONSTRAINT urls_url_key UNIQUE (url);
-
-
---
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-
---
--- Name: sessions sessions_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT "sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES public.users(id);
-
-
---
--- Name: urls urls_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.urls
-    ADD CONSTRAINT "urls_userId_fkey" FOREIGN KEY ("userId") REFERENCES public.users(id);
+    ADD CONSTRAINT users_email_key UNIQUE (email);
 
 
 --
