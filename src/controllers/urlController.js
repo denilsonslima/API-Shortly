@@ -3,19 +3,18 @@ import db from "../config/database.js";
 
 export const criarUrl = async (req, res) => {
     const {url} = req.body;
-    const {id} = res.locals.sessions;
+    const {id: userId} = res.locals.sessions;
+    const shortUrl = nanoid(10)
 
     try {
-        const shortUrl = nanoid()
-        await db.query(`
-        INSERT INTO urls (url, "shortUrl", "userId") VALUES ($1, $2, $3)
-        `, [url, shortUrl, id])
+        const {rows: [dados]} = await db.query(`
+        INSERT INTO urls (url, "shortUrl", "userId") VALUES ($1, $2, $3) RETURNING id
+        `, [url, shortUrl, userId])
 
-        const dados = await db.query(`
-        SELECT id, "shortUrl" from urls where url = $1;
-        `, [url])
-
-        res.status(201).send(dados.rows[0])
+        res.status(201).send({
+            id: dados.id,
+            shortUrl: shortUrl
+        })
     } catch (error) {
         res.status(500).send(error)
     }
@@ -24,15 +23,13 @@ export const criarUrl = async (req, res) => {
 export const pegarUrl = async (req, res) => {
     const {id} = req.params;
     try {
-        const dados = await db.query(`
-        SELECT id, "shortUrl", url FROM urls WHERE "userId" = $1
+        const {rows: [dados], rowCount} = await db.query(`
+        SELECT id, "shortUrl", url FROM urls WHERE id = $1
         `, [id])
 
-        if(dados.rowCount === 0) return res.sendStatus(404);
-
-        if(dados.rowCount === 1) return  res.send(dados.rows[0])
+        if(rowCount < 1) return res.status(404).send();
        
-        res.send(dados.rows)
+        res.send(dados)
     } catch (error) {
         res.status(500).send(error)
     }
